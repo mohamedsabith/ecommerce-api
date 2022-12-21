@@ -6,6 +6,8 @@ const { CONNECTION_URL } = process.env;
 
 // Connect to mongoose.
 const dbConnection = () => {
+  mongoose.set('strictQuery', false);
+
   mongoose
     .connect(CONNECTION_URL, {
       useNewUrlParser: true,

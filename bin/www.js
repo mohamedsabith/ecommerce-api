@@ -32,11 +32,11 @@ const onError = (error) => {
 
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges`);
+      console.error(chalk.red(`${bind} requires elevated privileges`));
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use`);
+      console.error(chalk.red(`${bind} is already in use`));
       process.exit(1);
       break;
     default:
