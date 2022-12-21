@@ -1,4 +1,5 @@
 import http from 'http';
+import chalk from 'chalk';
 import app from '../app.js';
 
 const normalizePort = (val) => {
@@ -46,7 +47,7 @@ const onError = (error) => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === 'string' ? `pipe ${addr}` : `${addr.port}`;
-  console.log(`Server started at http://localhost:${bind}`);
+  console.log(chalk.blue(`Server started at http://localhost:${bind}`));
 };
 
 server.listen(port);

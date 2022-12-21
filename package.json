@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node bin/www.js",
-    "dev":"nodemon bin/www.js"
+    "dev": "nodemon bin/www.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "homepage": "https://github.com/mohamedsabith/msb-cart-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "chalk": "^5.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

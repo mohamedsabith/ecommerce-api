@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import chalk from 'chalk';
 import 'dotenv/config';
 
 const { CONNECTION_URL } = process.env;
@@ -11,8 +12,8 @@ const dbConnection = () => {
       useUnifiedTopology: true,
     })
     // Database Connected successfully
-    .then(() => console.log('Database Connected successfully'))
-    .catch((error) => console.log(`${error} did not connect`));
+    .then(() => console.log(chalk.blue('Database Connected successfully')))
+    .catch((error) => console.log(chalk.red(`${error.message} did not connect`)));
 };
 
 export default dbConnection;
