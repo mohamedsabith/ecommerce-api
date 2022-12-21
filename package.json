@@ -2,9 +2,11 @@
   "name": "msb-cart-api",
   "version": "1.0.0",
   "description": "msb cart api",
+  "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
