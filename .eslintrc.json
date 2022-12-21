@@ -13,6 +13,7 @@
     "rules": {
         "no-console": "warn",
         "no-restricted-syntax": "error",
+        "linebreak-style":"off",
         "no-undef": "error",
         "semi": "error",
         "semi-spacing": "error",
