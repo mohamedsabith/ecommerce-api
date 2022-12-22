@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
-import gender from '../helpers/enum/gender';
-import role from '../helpers/enum/role';
+import gender from '../helpers/enum/gender.js';
+import role from '../helpers/enum/role.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -43,12 +43,12 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: [...gender],
+      enum: Object.values(gender),
       default: gender.PREFER_NOT_TO_SAY,
     },
     role: {
       type: String,
-      enum: [...role],
+      enum: Object.values(role),
       default: role.USER,
     },
   },
@@ -57,6 +57,6 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ username: 1, email: 1 });
 
-const userModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model('User', userSchema);
 
-export default userModel;
+export default UserModel;
