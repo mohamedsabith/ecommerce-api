@@ -26,7 +26,7 @@ const signup = async (req, res) => {
       .verifications.create({
         to: `+91${phoneNumber}`,
         channel: 'sms',
-      }).then(({ status }) => res.json(goodResponse({ status }, 'OTP Sent Successfully.'))).catch((error) => res.json(failedResponse(error)));
+      }).then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.'))).catch((error) => res.json(failedResponse(error)));
   } catch (error) {
     return res.json(failedResponse(error.message));
   }
