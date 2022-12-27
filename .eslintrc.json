@@ -11,6 +11,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "import/prefer-default-export": "off",
         "no-console": "off",
         "new-cap":"off",
         "consistent-return":"off",
@@ -22,6 +23,7 @@
         "eqeqeq": "warn",
         "no-invalid-this": "error",
         "no-return-assign": "error",
+        "no-underscore-dangle":"off",
         "no-unused-expressions": [
             "error",
             {
