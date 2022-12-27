@@ -5,10 +5,10 @@ import role from '../helpers/enum/role.js';
 
 const userSchema = new mongoose.Schema(
   {
-    fullname: {
+    fullName: {
       type: String,
       minlength: [3, 'Username must be of minimum 3 characters'],
-      required: [true, 'Please enter fullname'],
+      required: [true, 'Please enter full Name'],
     },
     email: {
       type: String,
