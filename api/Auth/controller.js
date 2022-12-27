@@ -30,7 +30,9 @@ export const signup = async (req, res) => {
       .verifications.create({
         to: `+91${phoneNumber}`,
         channel: 'sms',
-      }).then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.'))).catch((error) => res.json(failedResponse(error)));
+      })
+      .then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.')))
+      .catch((error) => res.json(failedResponse(error)));
   } catch (error) {
     return res.json(failedResponse(error.message));
   }
@@ -69,5 +71,26 @@ export const otpVerification = (req, res) => {
       .catch((err) => res.json(failedResponse(err, 401, 'Please try after sometime')));
   } catch (error) {
     return res.json(failedResponse(error));
+  }
+};
+
+// Verify a user.
+export const signIn = async (req, res) => {
+  const { email, phoneNumber, password } = req.body;
+  try {
+    // Get a user by email or phone number.
+    const isUser = email ? await getUserByEmail(email) : await getUserByNumber(phoneNumber);
+    // Throws an error if the user is not found
+    if (!isUser) throw new Error('User not found');
+    // Verify a bcrypt password.
+    const decryptPassword = await passwordComparing(password, isUser.password);
+    // Throws an error if password is invalid.
+    if (!decryptPassword) throw new Error('Incorrect password');
+
+    const accessToken = await creatingToken(isUser.email, isUser._id, ACCESS_JWT_TOKEN, '1d');
+    const refreshToken = await creatingToken(isUser.email, isUser._id, REFRESH_JWT_TOKEN, '2d');
+    return res.json(goodResponse({ accessToken, refreshToken, isUser }, 'successfully logined'));
+  } catch (error) {
+    return res.json(failedResponse(error.message));
   }
 };
