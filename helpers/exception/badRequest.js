@@ -1,6 +1,6 @@
-export default function BadRequest(message, err) {
+export default function BadRequest(message, code) {
   this.message = message;
-  this.err = err;
+  this.code = code;
   this.name = 'BadRequest';
   this.statusCode = 400;
 }
