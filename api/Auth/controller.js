@@ -1,38 +1,50 @@
 import twilio from 'twilio';
+import { EmailVerifier } from 'simple-email-verifier';
 import { createUser, getUserByEmail, getUserByNumber } from './service.js';
 import { goodResponse, failedResponse } from '../../helpers/response.js';
 import { bcryptingPassword, passwordComparing } from '../../helpers/bcrypt.js';
 import creatingToken from '../../helpers/jwtToken.js';
+import BadRequest from '../../helpers/exception/badRequest.js';
 
 const {
   TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, ACCESS_JWT_TOKEN, REFRESH_JWT_TOKEN,
 } = process.env;
 
 const client = new twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+const verifier = new EmailVerifier(10000);
 
 export const signup = async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
-    // checking user already exist
-    const mailExist = await getUserByEmail(email);
     // checking email already exist
+    const mailExist = await getUserByEmail(email);
     if (mailExist) {
-      return res.json(failedResponse('Another account is using this email.'));
+      throw new BadRequest('Another account is using this email.');
     }
     // checking number already exist
     const numberExist = await getUserByNumber(phoneNumber);
     if (numberExist) {
-      return res.json(failedResponse('Another account is using this number.'));
+      throw new BadRequest('Another account is using this number.');
     }
-
-    client.verify.v2
-      .services(process.env.TWILIO_SERVICE_ID)
-      .verifications.create({
-        to: `+91${phoneNumber}`,
-        channel: 'sms',
+    // email verification
+    verifier
+      .verify(email)
+      .then((result) => {
+        if (result) {
+          // otp verification
+          client.verify.v2
+            .services(process.env.TWILIO_SERVICE_ID)
+            .verifications.create({
+              to: `+91${phoneNumber}`,
+              channel: 'sms',
+            })
+            .then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.')))
+            .catch((err) => res.json(failedResponse(err)));
+        } else {
+          return res.json(failedResponse('Please enter valid email address'));
+        }
       })
-      .then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.')))
-      .catch((error) => res.json(failedResponse(error)));
+      .catch((err) => res.json(failedResponse(err)));
   } catch (error) {
     return res.json(failedResponse(error.message));
   }
