@@ -8,6 +8,7 @@ export default (err, req, res, next) => {
   }
 
   if (err instanceof BadRequest) {
+    console.log('error');
     return res.status(400).json(failedResponse(err.message, err.statusCode, err));
   }
 
