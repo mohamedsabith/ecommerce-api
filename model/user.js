@@ -51,6 +51,22 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(role),
       default: role.USER,
     },
+    otp: {
+      type: String,
+      default: null,
+    },
+    otpExpireTime: {
+      type: Date,
+      default: null,
+    },
+    otpLastSent: {
+      type: Date,
+      default: null,
+    },
+    otpSentCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );

@@ -22,3 +22,18 @@ export const getUserByNumber = async (phoneNumber) => {
   const user = await UserModel.findOne({ phoneNumber });
   return user;
 };
+
+
+export const otpDetailsSaving = async (otp, otpExpireTime, otpLastSent, otpSentCount) => {
+  const otpDetails = await UserModel.updateMany({
+    otp, otpExpireTime, otpLastSent, otpSentCount,
+  });
+  return otpDetails;
+};
+
+export const otpCountReset = async () => {
+  const otpReset = await UserModel.updateOne({
+    otpSentCount: 0,
+  });
+  return otpReset;
+};

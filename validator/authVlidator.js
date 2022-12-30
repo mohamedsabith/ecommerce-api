@@ -10,7 +10,7 @@ export const signupValidation = async (req, res, next) => {
       .label('Password'),
     confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm password')
       .messages({ 'any.only': '{{#label}} does not match' }),
-  }).options({ stripUnknown: true });
+  });
 
   req.body = await schema.validateAsync(req.body);
   return next();

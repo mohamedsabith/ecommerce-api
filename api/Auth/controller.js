@@ -1,7 +1,9 @@
 import twilio from 'twilio';
+import moment from 'moment';
 import otpGenerator from 'otp-generator';
-import { EmailVerifier } from 'simple-email-verifier';
-import { createUser, getUserByEmail, getUserByNumber } from './service.js';
+import {
+  createUser, getUserByEmail, getUserByNumber, otpDetailsSaving, otpCountReset,
+} from './service.js';
 import { goodResponse, failedResponse } from '../../helpers/response.js';
 import { bcryptingPassword, passwordComparing } from '../../helpers/bcrypt.js';
 import creatingToken from '../../helpers/jwtToken.js';
@@ -13,7 +15,6 @@ const {
 } = process.env;
 
 const client = new twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-const verifier = new EmailVerifier(10000);
 
 export const signup = async (req, res) => {
   const { email, phoneNumber } = req.body;
@@ -28,25 +29,15 @@ export const signup = async (req, res) => {
   if (numberExist) {
     throw new BadRequest('Another account is using this number.', 'NUMBER_EXISTS');
   }
-  // email verification
-  verifier
-    .verify(email)
-    .then((result) => {
-      if (result) {
-        // otp verification
-        client.verify.v2
-          .services(process.env.TWILIO_SERVICE_ID)
-          .verifications.create({
-            to: `+91${phoneNumber}`,
-            channel: 'sms',
-          })
-          .then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.')))
-          .catch((err) => res.json(failedResponse(err)));
-      } else {
-        return res.json(failedResponse('Please enter valid email address'));
-      }
+
+  client.verify.v2
+    .services(process.env.TWILIO_SERVICE_ID)
+    .verifications.create({
+      to: `+91${phoneNumber}`,
+      channel: 'sms',
     })
-    .catch(() => res.json(failedResponse('Please try after some time.')));
+    .then(({ status }) => res.json(goodResponse({ status, userDetails: req.body }, 'OTP Sent Successfully.')))
+    .catch((err) => res.json(failedResponse(err)));
 };
 
 // OTP VERIFICATION
@@ -113,6 +104,24 @@ export const forgotPassword = async (req, res) => {
 
   const otp = otpGenerator.generate(8, { upperCaseAlphabets: true, specialChars: false });
 
+  const FIVE_MINUTES = 5 * 60000;
+
+  const otpExpireTime = new Date().getTime() + FIVE_MINUTES;
+
+  if (moment(user.otpExpireTime).format('MMMM Do YYYY, h:mm:ss a') > moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a')) {
+    throw new BadRequest('Resent otp sent only after five minutes');
+  }
+
+  if (user.otpSentCount === 5) {
+    const start = moment(user.otpLastSent).format('MMMM Do YYYY, h:mm:ss a');
+    if (moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a') === moment(start, 'MMMM Do YYYY, h:mm:ss a').add(1, 'days').format('MMMM Do YYYY, h:mm:ss a')) {
+      await otpCountReset();
+    }
+    throw new BadRequest('You have exceeded your maximum limit Please try within 24 hours.');
+  }
+
+  await otpDetailsSaving(otp, otpExpireTime, Date.now(), user.otpSentCount + 1);
+
   const mailData = {
     from: process.env.GOOGLE_APP_EMAIL, // sender address
     to: email, // list of receivers
@@ -120,8 +129,8 @@ export const forgotPassword = async (req, res) => {
     html: `<p>Hey ${user.fullName}!</p> 
       <p> We received a request to reset your password. Enter the following password reset code: </p>
       <p> Use your secret code!</p>
-      <button style="background-color: #fff;border-radius: 10px;border-color: #3630a3;color:#000000;height: 60px;width: 120px; font-weight: 900;">${otp}</button>
-      <br><p>If you did not request a password reset, please ignore this email or reply to let us know. This password reset otp is only valid for the next 10 minutes. </p>`,
+      <h2 style='font-family: Arial, Helvetica, sans-serif;'>${otp}</h2>
+      <p>If you did not request a password reset, please ignore this email or reply to let us know. This password reset otp is only valid for the next 5 minutes. </p>`,
   };
 
   transporter.sendMail(mailData, (err, info) => {
