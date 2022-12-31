@@ -114,7 +114,7 @@ export const forgotPassword = async (req, res) => {
 
   if (user.otpSentCount === 5) {
     const start = moment(user.otpLastSent).format('MMMM Do YYYY, h:mm:ss a');
-    if (moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a') === moment(start, 'MMMM Do YYYY, h:mm:ss a').add(1, 'days').format('MMMM Do YYYY, h:mm:ss a')) {
+    if (moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a') >= moment(start, 'MMMM Do YYYY, h:mm:ss a').add(1, 'days').format('MMMM Do YYYY, h:mm:ss a')) {
       await otpCountReset();
     }
     throw new BadRequest('You have exceeded your maximum limit Please try within 24 hours.');
