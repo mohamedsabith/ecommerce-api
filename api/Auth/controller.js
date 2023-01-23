@@ -127,7 +127,7 @@ export const forgotPassword = async (req, res) => {
     from: process.env.GOOGLE_APP_EMAIL, // sender address
     to: email, // list of receivers
     subject: `${otp} is your msb account recovery code`,
-    html: `<p>Hey ${user.fullName}!</p> 
+    html: `<p>Hi ${user.fullName}!</p> 
       <p> We received a request to reset your password. Enter the following password reset code: </p>
       <p> Use your secret code!</p>
       <h2 style='font-family: Arial, Helvetica, sans-serif;'>${otp}</h2>
@@ -138,6 +138,16 @@ export const forgotPassword = async (req, res) => {
     if (err) {
       throw new BadRequest(err);
     }
-    return res.json(goodResponse({ info }, 'Message sent successfully'));
+    return res.json(goodResponse({ info, email }, 'Message sent successfully'));
   });
 };
+
+export const forgotPasswordOtpVerification = async (req, res) => {
+  const { otp, email } = req.body;
+  const result = await getUserByEmail(email);
+  if (result.otp === otp) {
+    return res.json(goodResponse({ email }, 'your entered otp is correct, please change your password'));
+  }
+  return res.json(failedResponse('Failed to authenticate invalid otp', 401, 'Invalid otp'));
+};
+

@@ -8,7 +8,10 @@ export const signupValidation = async (req, res, next) => {
     phoneNumber: Joi.number().required().label('Phone number'),
     password: Joi.string().required().min(8).max(20)
       .label('Password'),
-    confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm password')
+    confirmPassword: Joi.any()
+      .equal(Joi.ref('password'))
+      .required()
+      .label('Confirm password')
       .messages({ 'any.only': '{{#label}} does not match' }),
   });
 
@@ -29,7 +32,12 @@ export const signInValidation = async (req, res, next) => {
       }).unknown(),
       {
         then: Joi.object({
-          phoneNumber: Joi.number().required().label('Phone number').messages({ 'any.required': 'Phone number or email is required' }),
+          phoneNumber: Joi.number()
+            .required()
+            .label('Phone number')
+            .messages({
+              'any.required': 'Phone number or email is required',
+            }),
         }),
       },
     )
@@ -40,7 +48,8 @@ export const signInValidation = async (req, res, next) => {
       {
         then: Joi.object({
           phoneNumber: Joi.valid(null).messages({
-            'any.only': 'You cannot use Phone number and email at the same time',
+            'any.only':
+                            'You cannot use Phone number and email at the same time',
           }),
         }),
       },
@@ -58,9 +67,34 @@ export const otpValidation = async (req, res, next) => {
     phoneNumber: Joi.number().required().label('Phone number'),
     password: Joi.string().required().min(8).max(20)
       .label('Password'),
-    otp: Joi.number().required().max(9999).message('otp maximum 4 digits')
+    otp: Joi.number()
+      .required()
+      .max(9999)
+      .message('otp maximum 4 digits')
       .min(1000)
       .message('otp must be 4 digits'),
+  });
+  req.body = await schema.validateAsync(req.body);
+  return next();
+};
+
+export const forgotPasswordValidation = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required().label('Email'),
+  });
+  req.body = await schema.validateAsync(req.body);
+  return next();
+};
+
+export const forgotPasswordOtpValidation = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required().label('Email'),
+    otp: Joi.string()
+      .required()
+      .max(8)
+      .message('otp maximum 8 digits')
+      .min(8)
+      .message('otp must be 8 digits'),
   });
   req.body = await schema.validateAsync(req.body);
   return next();

@@ -1,5 +1,5 @@
 // Export a good response.
-export const goodResponse = ({ response }, message, statusCode = 200) => ({
+export const goodResponse = (response, message, statusCode = 200) => ({
   success: true,
   ...response,
   message,
