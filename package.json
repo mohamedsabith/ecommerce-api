@@ -1,7 +1,7 @@
 {
-  "name": "msb-cart-api",
+  "name": "dr-cart-api",
   "version": "1.0.0",
-  "description": "msb cart api",
+  "description": "dr-cart api",
   "main": "app.js",
   "type": "module",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mohamedsabith/msb-cart-api.git"
+    "url": "git+https://github.com/mohamedsabith/dr-cart-api.git"
   },
   "author": "mohamedsabith",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mohamedsabith/msb-cart-api/issues"
+    "url": "https://github.com/mohamedsabith/dr-cart-api.git/issues"
   },
-  "homepage": "https://github.com/mohamedsabith/msb-cart-api#readme",
+  "homepage": "https://github.com/mohamedsabith/dr-cart-api.git#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "chalk": "^5.2.0",

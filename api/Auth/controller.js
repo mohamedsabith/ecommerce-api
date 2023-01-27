@@ -126,7 +126,7 @@ export const forgotPassword = async (req, res) => {
   const mailData = {
     from: process.env.GOOGLE_APP_EMAIL, // sender address
     to: email, // list of receivers
-    subject: `${otp} is your msb account recovery code`,
+    subject: `${otp} is your dr cart account recovery code`,
     html: `<p>Hi ${user.fullName}!</p> 
       <p> We received a request to reset your password. Enter the following password reset code: </p>
       <p> Use your secret code!</p>

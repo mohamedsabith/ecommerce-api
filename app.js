@@ -24,7 +24,7 @@ app.use(errorHandler);
 
 // API
 app.get('/', (req, res) => {
-  res.send('MSB API WORKING FINE!!!');
+  res.send('DR CART API WORKING FINE!!!');
 });
 
 // Attempts to find the empty URL on this server.
